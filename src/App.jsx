@@ -1,6 +1,6 @@
-import {useState, useEffect, useCallback, useMemo} from 'react';
+import {useState, useEffect, useCallback, useMemo, useRef} from 'react';
 import Child from './Child';
-
+import useCounter from './useCounter';
 
 let val = 1;
 
@@ -17,11 +17,14 @@ const ExpensiveCalculation = (num) => {
 const App = () => {
 
   const [value, setValue] = useState(null);
+  const {currentValue, incrementCounter, decrementCounter} = useCounter(100) || {};
+  console.log('counter', currentValue)
   const [age, setAge] = useState(10);
 
   let dob = 0;
 
-  // useEffect(() => {
+  // useEffect: hooks which call run after browser rendering 
+    // useEffect(() => {
   //    // Get the current year and subtract the age
   //   dob = new Date().getFullYear() - parseInt(age);
   //   console.log("dob", dob);
@@ -30,7 +33,7 @@ const App = () => {
 
   
 
-  // use callback hook: memized function 
+  // use callback hook: memoized function 
 
 // let sum = () => {
 //   let num = 1000;
@@ -62,13 +65,32 @@ const sum = useCallback(() => {
   }, [1000]); // Only re-compute when inputValue changes
 
 
+ // useRef() // change the value without rendering
+
+ const inputRef = useRef(null);
+ console.log("inputRef", inputRef);
+ 
+ useEffect(() => {
+  // Focus the input element on component mount
+  console.log("useEffectInputRef", inputRef);
+  console.log("inpuRef", inputRef.current.value);
+  inputRef.current.focus();
+}, []);
+
+
 console.log("parent render")
 
   return (
     <> 
+      <input ref={inputRef} />
      <div>Parent</div>
      <div>value: {value}</div>
      <button onClick={() => setValue(value + 1)}>increment</button>
+
+     <div>---------------------</div>
+     <div>{currentValue}</div>
+     <button onClick={incrementCounter}>increment</button>
+     <button onClick={decrementCounter}>decrement</button>
      <Child 
       // value={value}
       fn = {sum}
